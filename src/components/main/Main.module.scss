@@ -11,7 +11,7 @@
 
     &__web_camera {
         width: 320px;
-        height: 480px;
+        height: auto;
         border: 1px solid black;
         margin-bottom: 30px;
         transform: scaleX(-1)
@@ -36,8 +36,6 @@
         top: 0;
         left: 0;
         transform: scaleX(-1);
-        width: 320px;
-        height: 480px;
     }
 
     &__model_loading {

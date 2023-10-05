@@ -7,8 +7,9 @@ const Main = () => {
   const [status, setStatus] = useState("start");
   const [ModelsIsLoad, setModalIsLoad] = useState(false);
   const navigate = useNavigate();
+
   const statusText = {
-    start: "Начать",
+    start: "Начать скан лица",
     turning: "Включения...",
     identification: "Идентификация...",
   };
@@ -30,9 +31,11 @@ const Main = () => {
   useEffect(() => {
     const loadModels = async () => {
       const MODEL_URL = "/models";
-      await faceapi.loadSsdMobilenetv1Model(MODEL_URL);
-      await faceapi.loadFaceLandmarkModel(MODEL_URL);
-      await faceapi.loadFaceRecognitionModel(MODEL_URL);
+      await Promise.all([
+        faceapi.nets.tinyFaceDetector.loadFromUri("/models"),
+        faceapi.nets.faceLandmark68Net.loadFromUri("/models"),
+        faceapi.nets.faceRecognitionNet.loadFromUri("/models"),
+      ]);
       setModalIsLoad(true);
     };
 
@@ -46,7 +49,7 @@ const Main = () => {
     const startVideo = async (video) => {
       const constraints = {
         audio: false,
-        video: { width: 320, height: 480, facingMode: "user" },
+        video: { width: 320 },
       };
       stream = await navigator.mediaDevices.getUserMedia(constraints);
       video.srcObject = stream;
@@ -68,48 +71,43 @@ const Main = () => {
       faceapi.matchDimensions(canvas, displaySize);
 
       setInterval(async () => {
-        const detections = await faceapi
-          .detectAllFaces(video)
-          .withFaceLandmarks()
-          .withFaceDescriptors();
-        const resizedDetections = faceapi.resizeResults(
-          detections,
-          displaySize
-        );
         canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
-        // faceapi.draw.drawDetections(canvas, resizedDetections);
-        faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
-        resizedDetections.forEach((detection) => {
-          const box = detection.detection.box;
-          let drawBox = new faceapi.draw.DrawBox(box, {
-            label: "",
-            lineWidth: 4,
-            boxColor: "blue",
-          });
-          drawBox.draw(canvas);
-        });
-        if (detections[0]) {
-          const faceCanvas = faceapi.createCanvasFromMedia(video);
-          faceCanvas.width = detections[0].detection.box.width;
-          faceCanvas.height = detections[0].detection.box.height;
-          const faceContext = faceCanvas.getContext("2d");
-          faceContext.drawImage(
-            video,
-            detections[0].detection.box.x,
-            detections[0].detection.box.y,
-            detections[0].detection.box.width,
-            detections[0].detection.box.height,
-            0,
-            0,
-            detections[0].detection.box.width,
-            detections[0].detection.box.height
-          );
+        const detection = await faceapi
+          .detectSingleFace(video, new faceapi.TinyFaceDetectorOptions())
+          .withFaceLandmarks();
 
-          const imageBlob = await new Promise((resolve) =>
-            faceCanvas.toBlob(resolve, "image/jpeg", 0.9)
-          );
-          imgRef.current.src = URL.createObjectURL(imageBlob);
-        }
+        if (!detection) return;
+        const dims = faceapi.matchDimensions(canvas, video, true);
+        const resizedDetection = faceapi.resizeResults(detection, dims);
+        // faceapi.draw.drawDetections(canvas, resizedDetection);
+        // faceapi.draw.drawFaceLandmarks(canvas, resizedDetection);
+        const box = resizedDetection.detection.box;
+        let drawBox = new faceapi.draw.DrawBox(box, {
+          label: "",
+          lineWidth: 4,
+          boxColor: "blue",
+        });
+        drawBox.draw(canvas);
+        const faceCanvas = faceapi.createCanvasFromMedia(video);
+        faceCanvas.width = box.width;
+        faceCanvas.height = box.height;
+        const faceContext = faceCanvas.getContext("2d");
+        faceContext.drawImage(
+          video,
+          box.x,
+          box.y,
+          box.width,
+          box.height,
+          0,
+          0,
+          box.width,
+          box.height
+        );
+
+        const imageBlob = await new Promise((resolve) =>
+          faceCanvas.toBlob(resolve, "image/jpeg", 0.9)
+        );
+        imgRef.current.src = URL.createObjectURL(imageBlob);
       }, 100);
     };
 
