@@ -84,7 +84,7 @@ const Main = () => {
         const box = resizedDetection.detection.box;
         let drawBox = new faceapi.draw.DrawBox(box, {
           label: "",
-          lineWidth: 4,
+          lineWidth: 1,
           boxColor: "blue",
         });
         drawBox.draw(canvas);
