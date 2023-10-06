@@ -10,7 +10,7 @@ const Main = () => {
 
   const statusText = {
     start: "Начать скан лица",
-    turning: "Включения...",
+    turning: "Включениe...",
     identification: "Идентификация...",
   };
 
@@ -39,7 +39,7 @@ const Main = () => {
       setModalIsLoad(true);
     };
 
-    loadModels();
+    loadModels().finally();
   }, []);
 
   const handleStart = async () => {
@@ -79,8 +79,6 @@ const Main = () => {
         if (!detection) return;
         const dims = faceapi.matchDimensions(canvas, video, true);
         const resizedDetection = faceapi.resizeResults(detection, dims);
-        // faceapi.draw.drawDetections(canvas, resizedDetection);
-        // faceapi.draw.drawFaceLandmarks(canvas, resizedDetection);
         const box = resizedDetection.detection.box;
         let drawBox = new faceapi.draw.DrawBox(box, {
           label: "",
@@ -112,7 +110,7 @@ const Main = () => {
     };
 
     await startVideo(video);
-    detectFaces(video);
+    await detectFaces(video);
   };
 
   return (
