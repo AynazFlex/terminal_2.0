@@ -128,16 +128,16 @@ const Main = () => {
               stream = null;
               navigate("/payment");
             } else {
-              setTimeout(tick, 500);
+              setTimeout(tick, 200);
             }
           } else {
-            setTimeout(tick, 500);
+            setTimeout(tick, 200);
           }
         } else {
-          setTimeout(tick, 500);
+          setTimeout(tick, 200);
         }
       };
-      setTimeout(tick, 500);
+      setTimeout(tick, 200);
     };
 
     await startVideo(video);
