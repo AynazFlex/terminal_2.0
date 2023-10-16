@@ -12,7 +12,7 @@ const Main = () => {
   const dispatch = useDispatch();
 
   const statusText = {
-    turning: "Включения...",
+    turning: "Вклучение...",
     identification: "Идентификация...",
   };
 
@@ -38,7 +38,7 @@ const Main = () => {
       setModalIsLoad(true);
     };
 
-    loadModels();
+    loadModels().finally();
   }, []);
 
   const handleStart = async () => {
@@ -76,7 +76,6 @@ const Main = () => {
         const detection = await faceapi
           .detectSingleFace(video, new faceapi.TinyFaceDetectorOptions())
           .withFaceLandmarks();
-
         if (detection) {
           const dims = faceapi.matchDimensions(canvas, video, true);
           const resizedDetection = faceapi.resizeResults(detection, dims);
@@ -142,7 +141,7 @@ const Main = () => {
     };
 
     await startVideo(video);
-    detectFaces(video);
+    await detectFaces(video);
   };
 
   useEffect(() => {
