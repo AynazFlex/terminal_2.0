@@ -1,49 +1,120 @@
 .basket {
-    padding: 30px;
-    border: 1px solid black;
-    border-radius: 20px;
+    width: 920px;
+    padding: 20px 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 
-    &__link {
+    &__header {
         display: flex;
-        padding: 10px;
-        border-radius: 10px;
-        gap: 10px;
-        flex-direction: column;
         align-items: center;
-        background-color: white;
-        width: min-content;
-        margin: auto;
+        justify-content: space-between;
+        margin-bottom: 40px;
 
-        &>span {
-            color: black;
+        &>h1 {
+            font-size: 37px;
+            font-style: normal;
+            font-weight: 500;
+            color:#1B1B1F;
+            line-height: 44px;
+            letter-spacing: -0.25px;
+        }
+
+        &>button {
+            width: 157px;
+            height: 44px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 20px;
+            background-color: #FFDAD6;
+            font-size: 22px;
+            font-weight: 500;
+            color: #410002;
         }
     }
 
-    &__item {
-        background-color: white;
-        padding: 10px 20px;
+    &__colums {
         display: flex;
-        width: 350px;
-        justify-content: space-between;
+        margin-bottom: 28px;
+        font-size: 18px;
+        font-weight: 400;
+        line-height: 32px;
+        color: #44474F;
+
+        &>span {
+            width: 33%;
+
+            &:last-child {
+                text-align: right;
+            }
+        }
+    }
+
+    &__wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    &__item {
+        display: flex;
         align-items: center;
-        border-radius: 10px;
-        margin-bottom: 5px;
+        color: #1B1B1F;
+        font-size: 20px;
+        line-height: 26px;
+
+        &>span {
+            width: 33%;
+
+            &:last-child {
+                text-align: right;
+            }
+        }
     }
 
     &__item_title {
-        font-size: 20px;
+        font-weight: 400;
     }
 
-    &__item_total {
-        font-size: 24px;
-        font-weight: bold;
+    &__item_amount {
+        display: flex;
+        gap: 40px;
+        align-items: center;
+        font-weight: 400;
     }
 
-    &__total_sum {
-        background-color: white;
-        width: max-content;
-        margin: 20px auto;
-        padding: 10px;
+    &__item_price {
+        text-align: right;
+        font-weight: 500;
+    }
+
+    &__icon_wrapper {
         border-radius: 10px;
+        background-color: #FFDAD6;
+        padding: 10px;
+        cursor: pointer;
+    }
+
+    &__total {
+        display: flex;
+        justify-content: space-between;
+        font-size: 24px;
+        line-height: 24px;
+        font-weight: 500;
+        color: #1B1B1F;
+        margin-top: auto;
+        margin-bottom: 28px;
+    }
+
+    &__pay {
+        padding: 12px;
+        text-align: center;
+        font-size: 18px;
+        line-height: 18px;
+        color:#FFF;
+        background-color: #006E0D;
+        border-radius: 12px;
+        cursor: pointer;
     }
 }

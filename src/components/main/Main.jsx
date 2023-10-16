@@ -2,29 +2,28 @@ import { useNavigate } from "react-router-dom";
 import style from "./Main.module.scss";
 import { useRef, useState, useEffect } from "react";
 import * as faceapi from "face-api.js";
+import { useDispatch } from "react-redux";
+import { setCards } from "../../store/dataReducer";
 
 const Main = () => {
-  const [status, setStatus] = useState("start");
+  const [status, setStatus] = useState("turning");
   const [ModelsIsLoad, setModalIsLoad] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const statusText = {
-    start: "Начать скан лица",
     turning: "Включения...",
     identification: "Идентификация...",
   };
 
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
-  const imgRef = useRef(null);
-
   let stream = null;
 
   useEffect(() => {
     return () => {
       setStatus("start");
-      stream.getTracks().forEach((track) => track.stop());
-      stream = null;
+      setModalIsLoad(false);
     };
   }, []);
 
@@ -45,6 +44,7 @@ const Main = () => {
   const handleStart = async () => {
     setStatus("turning");
     const video = videoRef.current;
+    let isDecected = false;
 
     const startVideo = async (video) => {
       const constraints = {
@@ -70,50 +70,84 @@ const Main = () => {
       const canvas = canvasRef.current;
       faceapi.matchDimensions(canvas, displaySize);
 
-      setInterval(async () => {
+      const tick = async () => {
+        console.log("tick");
         canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
         const detection = await faceapi
           .detectSingleFace(video, new faceapi.TinyFaceDetectorOptions())
           .withFaceLandmarks();
 
-        if (!detection) return;
-        const dims = faceapi.matchDimensions(canvas, video, true);
-        const resizedDetection = faceapi.resizeResults(detection, dims);
-        // faceapi.draw.drawDetections(canvas, resizedDetection);
-        // faceapi.draw.drawFaceLandmarks(canvas, resizedDetection);
-        const box = resizedDetection.detection.box;
-        let drawBox = new faceapi.draw.DrawBox(box, {
-          label: "",
-          lineWidth: 1,
-          boxColor: "blue",
-        });
-        drawBox.draw(canvas);
-        const faceCanvas = faceapi.createCanvasFromMedia(video);
-        faceCanvas.width = box.width;
-        faceCanvas.height = box.height;
-        const faceContext = faceCanvas.getContext("2d");
-        faceContext.drawImage(
-          video,
-          box.x,
-          box.y,
-          box.width,
-          box.height,
-          0,
-          0,
-          box.width,
-          box.height
-        );
+        if (detection) {
+          const dims = faceapi.matchDimensions(canvas, video, true);
+          const resizedDetection = faceapi.resizeResults(detection, dims);
+          // faceapi.draw.drawDetections(canvas, resizedDetection);
+          faceapi.draw.drawFaceLandmarks(canvas, resizedDetection);
+          const box = resizedDetection.detection.box;
+          let drawBox = new faceapi.draw.DrawBox(box, {
+            label: "",
+            lineWidth: 1,
+            boxColor: "blue",
+          });
+          drawBox.draw(canvas);
+          const faceCanvas = faceapi.createCanvasFromMedia(video);
+          faceCanvas.width = box.width;
+          faceCanvas.height = box.height;
+          const faceContext = faceCanvas.getContext("2d");
+          faceContext.drawImage(
+            video,
+            box.x,
+            box.y,
+            box.width,
+            box.height,
+            0,
+            0,
+            box.width,
+            box.height
+          );
+          // const faceCanvas = document.createElement("canvas");
+          // faceCanvas.width = video.videoWidth;
+          // faceCanvas.height = video.videoHeight;
+          // const context = faceCanvas.getContext("2d");
+          // if (!context) return;
+          // context.drawImage(video, 0, 0, faceCanvas.width, faceCanvas.height);
 
-        const imageBlob = await new Promise((resolve) =>
-          faceCanvas.toBlob(resolve, "image/jpeg", 0.9)
-        );
-        imgRef.current.src = URL.createObjectURL(imageBlob);
-      }, 100);
+          const imageBlob = await new Promise((resolve) =>
+            faceCanvas.toBlob(resolve, "image/jpeg", 0.9)
+          );
+          if (!isDecected) {
+            const formData = new FormData();
+            formData.append("file_in", imageBlob);
+            const res = await fetch("http://151.248.126.126/api/v1/terminal", {
+              method: "POST",
+              body: formData,
+            });
+            if (res.ok) {
+              const cards = await res.json();
+              dispatch(setCards(cards));
+              isDecected = true;
+              stream.getTracks().forEach((track) => track.stop());
+              stream = null;
+              navigate("/payment");
+            } else {
+              setTimeout(tick, 500);
+            }
+          } else {
+            setTimeout(tick, 500);
+          }
+        } else {
+          setTimeout(tick, 500);
+        }
+      };
+      setTimeout(tick, 500);
     };
 
     await startVideo(video);
     detectFaces(video);
   };
+
+  useEffect(() => {
+    ModelsIsLoad && handleStart();
+  }, [ModelsIsLoad]);
 
   return (
     <div className={style.main}>
@@ -122,15 +156,8 @@ const Main = () => {
       )}
       <div className={style.main__container}>
         <video ref={videoRef} className={style.main__web_camera} />
-        <button
-          disabled={status === "identification" || status === "turning"}
-          onClick={handleStart}
-          className={style.main__start}
-        >
-          {statusText[status]}
-        </button>
         <canvas className={style.main__canvas} ref={canvasRef} />
-        <img src="" ref={imgRef} className={style.main__img_res} />
+        <div className={style.main__start}>{statusText[status]}</div>
       </div>
     </div>
   );

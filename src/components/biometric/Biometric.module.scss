@@ -1,0 +1,12 @@
+.biometric {
+    width: 920px;
+    padding: 20px 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+
+    &__link {
+        margin-top: auto;
+    }
+}

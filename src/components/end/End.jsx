@@ -1,14 +1,16 @@
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import style from "./End.module.scss";
+import { useDispatch } from "react-redux";
+import { setEnd } from "../../store/dataReducer";
 
-const End = ({ set }) => {
+const End = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
+    dispatch(setEnd());
     setTimeout(() => navigate("/", { replace: true }), 2000);
-
-    return () => set({ type: "SET", payload: {} });
   }, []);
 
   return (
