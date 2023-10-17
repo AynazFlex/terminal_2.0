@@ -12,7 +12,7 @@ const Main = () => {
   const dispatch = useDispatch();
 
   const statusText = {
-    turning: "Вклучение...",
+    turning: "Включение...",
     identification: "Идентификация...",
   };
 
@@ -116,10 +116,13 @@ const Main = () => {
           if (!isDecected) {
             const formData = new FormData();
             formData.append("file_in", imageBlob);
-            const res = await fetch("http://151.248.126.126/api/v1/terminal", {
-              method: "POST",
-              body: formData,
-            });
+            const res = await fetch(
+              "https://fp.centrinvest.ru/api/v1/terminal",
+              {
+                method: "POST",
+                body: formData,
+              }
+            );
             if (res.ok) {
               const cards = await res.json();
               dispatch(setCards(cards));
