@@ -1,6 +1,6 @@
 .basket {
-    width: 920px;
-    padding: 20px 0;
+    width: 100vw;
+    padding: 7.41vw;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -9,68 +9,67 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 40px;
+        margin-bottom: 7.41vw;
 
         &>h1 {
-            font-size: 37px;
+            font-size: 5.28vw;
             font-style: normal;
             font-weight: 500;
             color:#1B1B1F;
-            line-height: 44px;
+            line-height: 100%;
             letter-spacing: -0.25px;
         }
 
         &>button {
-            width: 157px;
-            height: 44px;
+            width: 19.2vw;
+            height: 6vw;
             display: flex;
             justify-content: center;
             align-items: center;
-            border-radius: 20px;
+            border-radius: 2.22vw;
             background-color: #FFDAD6;
-            font-size: 22px;
+            font-size: 2.03vw;
             font-weight: 500;
             color: #410002;
         }
     }
 
-    &__colums {
-        display: flex;
-        margin-bottom: 28px;
-        font-size: 18px;
-        font-weight: 400;
-        line-height: 32px;
-        color: #44474F;
-
+    %spn {
         &>span {
-            width: 33%;
+            width: 40%;
 
             &:last-child {
+                width: 20%;
                 text-align: right;
             }
         }
     }
 
+    &__colums {
+        display: flex;
+        margin-bottom: 4.44vw;
+        font-size: 2.22vw;
+        font-weight: 400;
+        line-height: 100%;
+        color: #44474F;
+
+        @extend %spn
+    }
+
     &__wrapper {
         display: flex;
         flex-direction: column;
-        gap: 20px;
+        gap: 3vw;
     }
 
     &__item {
         display: flex;
         align-items: center;
         color: #1B1B1F;
-        font-size: 20px;
-        line-height: 26px;
+        font-size: 2.6vw;
+        line-height: 100%;
 
-        &>span {
-            width: 33%;
-
-            &:last-child {
-                text-align: right;
-            }
-        }
+        @extend %spn
     }
 
     &__item_title {
@@ -91,7 +90,7 @@
 
     &__icon_wrapper {
         border-radius: 10px;
-        background-color: #FFDAD6;
+        background-color: #F4F3F7;
         padding: 10px;
         cursor: pointer;
     }
@@ -99,22 +98,11 @@
     &__total {
         display: flex;
         justify-content: space-between;
-        font-size: 24px;
-        line-height: 24px;
+        font-size: 5.28vw;
+        line-height: 100%;
         font-weight: 500;
         color: #1B1B1F;
         margin-top: auto;
-        margin-bottom: 28px;
-    }
-
-    &__pay {
-        padding: 12px;
-        text-align: center;
-        font-size: 18px;
-        line-height: 18px;
-        color:#FFF;
-        background-color: #006E0D;
-        border-radius: 12px;
-        cursor: pointer;
+        margin-bottom: 4.44vw;
     }
 }

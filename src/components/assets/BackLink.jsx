@@ -5,8 +5,8 @@ const BackLink = ({ to }) => (
   <Link className={style.back} to={to}>
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="14"
-      height="14"
+      width="2.22vw"
+      height="2.22vw"
       viewBox="0 0 24 24"
       fill="none"
     >

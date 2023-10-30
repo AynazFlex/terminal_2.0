@@ -160,7 +160,7 @@ const Chack = ({ products }) => {
                 (sum, { total_price, amount }) => sum + amount * total_price,
                 0
               )
-              .toFixed(2)}
+              .toFixed(2)}{" "}
             ₽
           </span>
         </div>

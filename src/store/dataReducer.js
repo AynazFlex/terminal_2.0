@@ -3,12 +3,12 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   products: [
     {
-      title: "Шоколад Вкусный 85 г.",
+      title: "Шоколад вкусный 85 г.",
       amount: 1,
       total_price: 87.99,
     },
     {
-      title: "Бананы фасованые",
+      title: "Бананы фасованные",
       amount: 1,
       total_price: 128.32,
     },
@@ -39,13 +39,19 @@ const dataSlice = createSlice({
     },
     setPlus: (state, { payload }) => {
       state.products.forEach((item) => {
-        if (item.title === payload) {
-          item.amount += 1;
-        }
+        if (item.title !== payload) return;
+        item.amount += 1;
       });
     },
     setDelete: (state, { payload }) => {
-      state.products = state.products.filter(({ title }) => title !== payload);
+      state.products.forEach((item, index) => {
+        if (item.title !== payload) return;
+        if (item.amount > 1) return (item.amount -= 1);
+        state.products = [
+          ...state.products.slice(0, index),
+          ...state.products.slice(index + 1),
+        ];
+      });
     },
   },
 });

@@ -1,23 +1,23 @@
 .payment {
-    width: 920px;
-    padding: 20px 0;
+    gap: 7.41vw;
+    width: 100vw;
+    padding: 7.41vw;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    gap: 40px;
 
     &__container {
         display: flex;
         flex-direction: column;
-        gap: 16px;
-        height: 500px;
+        gap: 2.96vw;
+        height: 40vh;
         overflow-y: auto;
     }
 
     &__title {
-        font-size: 37px;
+        font-size: 4.2vw;
         font-weight: 500;
-        line-height: 37px;
+        line-height: 100%;
         color: #1B1B1F;
     }
 
@@ -28,7 +28,7 @@
     &__item {
         background-color: #F4F3F7;
         border-radius: 10px;
-        padding: 16px;
+        padding: 2.96vw;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -39,15 +39,15 @@
     &__bank {
         display: flex;
         align-items: center;
-        gap: 8px;
-        font-size: 20px;
+        gap: 1.48vw;
+        font-size: 2.59vw;
         font-weight: 400;
-        line-height: 20px;
+        line-height: 100%;
         color: #1B1B1F;
     }
 
     &__bank_icon {
-        padding: 10px;
+        padding: 0.93vw;
         border-radius: 50%;
         background-color: #FAF9FD;
     }
@@ -55,24 +55,27 @@
     &__cashbacks {
         display: flex;
         flex-wrap: wrap;
-        gap: 8px;
-        margin-top: 8px;
+        gap: 0.74vw;
+        margin-top: 1.11vw;
     }
 
     &__no_cashback {
-        margin-left: 56px;
+        font-size: 1.48vw;
+        margin-left: 5.93vw;
+        font-weight: 500;
+        line-height: 100%;
     }
 
     &__cashback {
         display: flex;
         align-items: center;
-        gap: 8px;
-        font-size: 14px;
+        gap: 0.74vw;
+        font-size: 1.11vw;
         font-weight: 400;
-        line-height: 14px;
+        line-height: 100%;
         color: #44474F;
-        border-radius: 8px;
-        padding: 8px;
+        border-radius: 1.48vw;
+        padding: 0.74vw;
         background-color: #FAF9FD;
     }
 }

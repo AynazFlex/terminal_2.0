@@ -1,10 +1,10 @@
 .biometric {
-    width: 920px;
-    padding: 20px 0;
+    gap: 7.41vw;
+    width: 100vw;
+    padding: 7.41vw;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    gap: 40px;
 
     &__link {
         margin-top: auto;

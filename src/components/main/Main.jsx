@@ -1,55 +1,40 @@
 import { useNavigate } from "react-router-dom";
 import style from "./Main.module.scss";
-import { useRef, useState, useEffect } from "react";
-import * as faceapi from "face-api.js";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { setCards } from "../../store/dataReducer";
 
-const Main = () => {
+const Main = ({ faceapi }) => {
   const [status, setStatus] = useState("turning");
-  const [ModelsIsLoad, setModalIsLoad] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const statusText = {
-    turning: "Включение...",
+    turning: "Улыбнитесь))",
     identification: "Идентификация...",
   };
 
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
-  let stream = null;
 
   useEffect(() => {
     return () => {
       setStatus("start");
-      setModalIsLoad(false);
     };
   }, []);
 
-  useEffect(() => {
-    const loadModels = async () => {
-      const MODEL_URL = "/models";
-      await Promise.all([
-        faceapi.nets.tinyFaceDetector.loadFromUri("/models"),
-        faceapi.nets.faceLandmark68Net.loadFromUri("/models"),
-        faceapi.nets.faceRecognitionNet.loadFromUri("/models"),
-      ]);
-      setModalIsLoad(true);
-    };
-
-    loadModels().finally();
-  }, []);
-
-  const handleStart = async () => {
+  const handleStart = useCallback(async () => {
     setStatus("turning");
     const video = videoRef.current;
+    const canvas = canvasRef.current;
     let isDecected = false;
+    let stream = null;
 
     const startVideo = async (video) => {
       const constraints = {
-        audio: false,
-        video: { width: 320 },
+        video: {
+          height: video.getBoundingClientRect().height,
+        },
       };
       stream = await navigator.mediaDevices.getUserMedia(constraints);
       video.srcObject = stream;
@@ -62,103 +47,88 @@ const Main = () => {
       });
     };
 
-    const detectFaces = async (video) => {
+    const detectFaces = async (video, canvas) => {
       const displaySize = {
         width: video.videoWidth,
         height: video.videoHeight,
       };
-      const canvas = canvasRef.current;
       faceapi.matchDimensions(canvas, displaySize);
 
       const tick = async () => {
-        console.log("tick");
         canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
         const detection = await faceapi
           .detectSingleFace(video, new faceapi.TinyFaceDetectorOptions())
           .withFaceLandmarks();
-        if (detection) {
-          const dims = faceapi.matchDimensions(canvas, video, true);
-          const resizedDetection = faceapi.resizeResults(detection, dims);
-          // faceapi.draw.drawDetections(canvas, resizedDetection);
-          faceapi.draw.drawFaceLandmarks(canvas, resizedDetection);
-          const box = resizedDetection.detection.box;
-          let drawBox = new faceapi.draw.DrawBox(box, {
-            label: "",
-            lineWidth: 1,
-            boxColor: "blue",
-          });
-          drawBox.draw(canvas);
-          const faceCanvas = faceapi.createCanvasFromMedia(video);
-          faceCanvas.width = box.width;
-          faceCanvas.height = box.height;
-          const faceContext = faceCanvas.getContext("2d");
-          faceContext.drawImage(
-            video,
-            box.x,
-            box.y,
-            box.width,
-            box.height,
-            0,
-            0,
-            box.width,
-            box.height
-          );
-          // const faceCanvas = document.createElement("canvas");
-          // faceCanvas.width = video.videoWidth;
-          // faceCanvas.height = video.videoHeight;
-          // const context = faceCanvas.getContext("2d");
-          // if (!context) return;
-          // context.drawImage(video, 0, 0, faceCanvas.width, faceCanvas.height);
 
-          const imageBlob = await new Promise((resolve) =>
-            faceCanvas.toBlob(resolve, "image/jpeg", 0.9)
-          );
-          if (!isDecected) {
-            const formData = new FormData();
-            formData.append("file_in", imageBlob);
-            const res = await fetch(
-              "https://fp.centrinvest.ru/api/v1/terminal",
-              {
-                method: "POST",
-                body: formData,
-              }
-            );
-            if (res.ok) {
-              const cards = await res.json();
-              dispatch(setCards(cards));
-              isDecected = true;
-              stream.getTracks().forEach((track) => track.stop());
-              stream = null;
-              navigate("/payment");
-            } else {
-              setTimeout(tick, 200);
-            }
-          } else {
-            setTimeout(tick, 200);
-          }
-        } else {
-          setTimeout(tick, 200);
-        }
+        if (!detection) return setTimeout(tick, 200);
+
+        const dims = faceapi.matchDimensions(canvas, video, true);
+        const resizedDetection = faceapi.resizeResults(detection, dims);
+        // faceapi.draw.drawDetections(canvas, resizedDetection);
+        faceapi.draw.drawFaceLandmarks(canvas, resizedDetection);
+        const box = resizedDetection.detection.box;
+        let drawBox = new faceapi.draw.DrawBox(box, {
+          label: "",
+          lineWidth: 3,
+          boxColor: "blue",
+        });
+        drawBox.draw(canvas);
+        const faceCanvas = faceapi.createCanvasFromMedia(video);
+        faceCanvas.width = box.width;
+        faceCanvas.height = box.height;
+        const faceContext = faceCanvas.getContext("2d");
+        faceContext.drawImage(
+          video,
+          box.x,
+          box.y,
+          box.width,
+          box.height,
+          0,
+          0,
+          box.width,
+          box.height
+        );
+
+        const imageBlob = await new Promise((resolve) =>
+          faceCanvas.toBlob(resolve, "image/jpeg", 0.9)
+        );
+
+        if (isDecected) return setTimeout(tick, 200);
+
+        const formData = new FormData();
+        formData.append("file_in", imageBlob);
+        const res = await fetch("https://fp.centrinvest.ru/api/v1/terminal", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!res.ok) return setTimeout(tick, 200);
+
+        const cards = await res.json();
+        dispatch(setCards(cards));
+        isDecected = true;
+        stream.getTracks().forEach((track) => track.stop());
+        stream = null;
+        navigate("/payment");
       };
       setTimeout(tick, 200);
     };
 
     await startVideo(video);
-    await detectFaces(video);
-  };
+    await detectFaces(video, canvas);
+  }, [videoRef, canvasRef, dispatch, faceapi, navigate]);
 
   useEffect(() => {
-    ModelsIsLoad && handleStart();
-  }, [ModelsIsLoad]);
+    videoRef.current && canvasRef.current && handleStart();
+  }, [videoRef, canvasRef, handleStart]);
 
   return (
     <div className={style.main}>
-      {ModelsIsLoad || (
-        <div className={style.main__model_loading}>Загрузка моделей...</div>
-      )}
-      <div className={style.main__container}>
-        <video ref={videoRef} className={style.main__web_camera} />
-        <canvas className={style.main__canvas} ref={canvasRef} />
+      <div>
+        <div className={style.main__web_camera_wrapper}>
+          <video ref={videoRef} className={style.main__web_camera} />
+          <canvas className={style.main__canvas} ref={canvasRef} />
+        </div>
         <div className={style.main__start}>{statusText[status]}</div>
       </div>
     </div>
