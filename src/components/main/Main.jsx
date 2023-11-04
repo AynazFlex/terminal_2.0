@@ -97,7 +97,7 @@ const Main = ({ faceapi }) => {
 
         const formData = new FormData();
         formData.append("file_in", imageBlob);
-        const res = await fetch("https://fp.centrinvest.ru/api/v1/terminal", {
+        const res = await fetch("http://51.250.97.147/api/v1/terminal", {
           method: "POST",
           body: formData,
         });

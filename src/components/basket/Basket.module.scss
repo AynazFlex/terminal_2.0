@@ -74,6 +74,13 @@
 
     &__item_title {
         font-weight: 400;
+        position: relative;
+    }
+
+    &__item_category {
+        position: absolute;
+        top: 0;
+        left: -32px;
     }
 
     &__item_amount {

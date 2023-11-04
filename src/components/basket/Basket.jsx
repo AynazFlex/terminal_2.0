@@ -1,11 +1,18 @@
 import { useDispatch, useSelector } from "react-redux";
 import style from "./Basket.module.scss";
 import MyLink from "../assets/MyLink";
-import { setPlus, setDelete } from "../../store/dataReducer";
+import { setPlus, setDelete, getCategories } from "../../store/dataReducer";
+import { useEffect } from "react";
+import CashbackIcon from "../assets/CashbackIcon";
 
 const Basket = () => {
   const { products } = useSelector(({ data }) => data);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getCategories());
+  }, [dispatch]);
+
   return (
     <div className={style.basket}>
       <header className={style.basket__header}>
@@ -18,9 +25,16 @@ const Basket = () => {
         <span>Цена</span>
       </div>
       <div className={style.basket__wrapper}>
-        {products.map(({ title, amount, total_price }) => (
+        {products.map(({ title, amount, total_price, category }) => (
           <div key={title} className={style.basket__item}>
-            <span className={style.basket__item_title}>{title}</span>
+            <span className={style.basket__item_title}>
+              {title}
+              {category && (
+                <span className={style.basket__item_category}>
+                  <CashbackIcon size={24} name={category} />
+                </span>
+              )}
+            </span>
             <span className={style.basket__item_amount}>
               <span
                 onClick={() => dispatch(setDelete(title))}
