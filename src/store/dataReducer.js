@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import api from "./api";
 
 export const getCategories = createAsyncThunk(
   "data/categories",
@@ -6,14 +7,20 @@ export const getCategories = createAsyncThunk(
     try {
       const { products } = thunkAPI.getState().data;
       const results = await Promise.allSettled(
-        products.map(({ title }) =>
-          fetch("http://51.250.97.147/api/v1/get_category/", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ name: title }),
-          }).then((response) => response.json())
+        products.map(
+          ({ title }) =>
+            api.post(
+              "/get_category/",
+              JSON.stringify({ name: title }),
+              "application/json"
+            )
+          // fetch("http://51.250.97.147/api/v1/get_category/", {
+          //   method: "POST",
+          //   headers: {
+          //     "Content-Type": "application/json",
+          //   },
+          //   body: JSON.stringify({ name: title }),
+          // }).then((response) => response.json())
         )
       );
       return results.reduce((arr, res, i) => {

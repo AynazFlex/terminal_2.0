@@ -3,6 +3,7 @@ import style from "./Main.module.scss";
 import { useRef, useState, useEffect, useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { setCards } from "../../store/dataReducer";
+import api from "../../store/api";
 
 const Main = ({ faceapi }) => {
   const [status, setStatus] = useState("turning");
@@ -97,19 +98,29 @@ const Main = ({ faceapi }) => {
 
         const formData = new FormData();
         formData.append("file_in", imageBlob);
-        const res = await fetch("http://51.250.97.147/api/v1/terminal", {
-          method: "POST",
-          body: formData,
-        });
+        try {
+          const cards = await api.post("/terminal", formData);
+          dispatch(setCards(cards));
+          isDecected = true;
+          stream.getTracks().forEach((track) => track.stop());
+          stream = null;
+          navigate("/payment");
+        } catch {
+          setTimeout(tick, 200);
+        }
+        // const res = await fetch("http://51.250.97.147/api/v1/terminal", {
+        //   method: "POST",
+        //   body: formData,
+        // });
 
-        if (!res.ok) return setTimeout(tick, 200);
+        // if (!res.ok) return setTimeout(tick, 200);
 
-        const cards = await res.json();
-        dispatch(setCards(cards));
-        isDecected = true;
-        stream.getTracks().forEach((track) => track.stop());
-        stream = null;
-        navigate("/payment");
+        // const cards = await res.json();
+        // dispatch(setCards(cards));
+        // isDecected = true;
+        // stream.getTracks().forEach((track) => track.stop());
+        // stream = null;
+        // navigate("/payment");
       };
       setTimeout(tick, 200);
     };

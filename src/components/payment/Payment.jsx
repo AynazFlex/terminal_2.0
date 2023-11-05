@@ -83,18 +83,21 @@ const Payment = () => {
                   ) : (
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      width="28"
-                      height="28"
-                      viewBox="0 0 28 28"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
                     >
-                      <rect width="28" height="28" rx="4" fill="#3498db" />
-                      <path d="M19.5 14H8.5V8H19.5V14Z" fill="#fff" />
-                      <path d="M19.5 14H8.5V20H19.5V14Z" fill="#fff" />
-                      <circle cx="14" cy="19" r="2" fill="#fff" />
-                      <path
-                        d="M14 1C7.93 1 3 5.93 3 11V17H25V11C25 5.93 20.07 1 14 1ZM19.5 14H8.5V8H19.5V14ZM19.5 14H8.5V20H19.5V14Z"
-                        fill="#3498db"
-                      />
+                      <rect width="100%" height="100%" rx="4" fill="green" />
+                      <text
+                        x="12"
+                        y="17"
+                        font-size="16"
+                        font-family="Arial"
+                        text-anchor="middle"
+                        fill="#FFFFFF"
+                      >
+                        💰
+                      </text>
                     </svg>
                   )}
                 </span>
