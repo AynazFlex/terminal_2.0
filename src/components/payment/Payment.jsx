@@ -87,7 +87,6 @@ const Payment = () => {
                       height="24"
                       viewBox="0 0 24 24"
                     >
-                      <rect width="100%" height="100%" rx="4" fill="green" />
                       <text
                         x="12"
                         y="17"
