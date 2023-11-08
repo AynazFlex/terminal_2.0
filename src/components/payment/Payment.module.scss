@@ -54,6 +54,7 @@
 
     &__cashbacks {
         display: flex;
+        align-items: center;
         flex-wrap: wrap;
         gap: 0.74vw;
         margin-top: 1.11vw;
@@ -66,11 +67,24 @@
         line-height: 100%;
     }
 
+    &__total_cash {
+        gap: 0.74vw;
+        font-size: 2vw;
+        font-weight: 400;
+        line-height: 100%;
+        color: #44474F;
+        display: flex;
+        align-items: center;
+        padding: 4px 8px;
+        background-color: #FBE505;
+        border-radius: 16px;
+    }
+
     &__cashback {
         display: flex;
         align-items: center;
         gap: 0.74vw;
-        font-size: 1.11vw;
+        font-size: 2vw;
         font-weight: 400;
         line-height: 100%;
         color: #44474F;

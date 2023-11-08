@@ -36,13 +36,13 @@ export const getCategories = createAsyncThunk(
 const initialState = {
   products: [
     {
-      title: "Шоколад вкусный 85 г.",
+      title: "Средство для мытья посуды",
       amount: 1,
-      total_price: 87.99,
+      total_price: 120.45,
       category: null,
     },
     {
-      title: "Бананы фасованные",
+      title: "Огурчики соленые",
       amount: 1,
       total_price: 128.32,
       category: null,
@@ -54,9 +54,15 @@ const initialState = {
       category: null,
     },
     {
-      title: "Молоко паст. 3%",
+      title: "Молоко пастеризованное",
       amount: 1,
       total_price: 65.49,
+      category: null,
+    },
+    {
+      title: "Носки хлопковые",
+      amount: 1,
+      total_price: 76.23,
       category: null,
     },
   ],

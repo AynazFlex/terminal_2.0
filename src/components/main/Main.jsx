@@ -55,6 +55,12 @@ const Main = ({ faceapi }) => {
       };
       faceapi.matchDimensions(canvas, displaySize);
 
+      // await new Promise((res) => setTimeout(res, 2000));
+
+      // console.log("res");
+
+      let delta = 0;
+
       const tick = async () => {
         canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
         const detection = await faceapi
@@ -95,6 +101,11 @@ const Main = ({ faceapi }) => {
         );
 
         if (isDecected) return setTimeout(tick, 200);
+
+        if (delta < 5) {
+          delta++;
+          return setTimeout(tick, 200);
+        }
 
         const formData = new FormData();
         formData.append("file_in", imageBlob);

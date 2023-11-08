@@ -5,20 +5,45 @@ import Chack from "../assets/Chak";
 import MyLink from "../assets/MyLink";
 import CashbackIcon from "../assets/CashbackIcon";
 
+const calculateCash = (products, cards) => {
+  return cards
+    .reduce((res, card) => {
+      if (card.cashbacks.length === 0)
+        return [...res, { ...card, totalCash: -1 }];
+      const totalCash = card.cashbacks.reduce((sum, cashback) => {
+        const findProduct = products.find(
+          ({ category }) => category === cashback.product_type
+        );
+        if (findProduct)
+          return (
+            sum +
+            (findProduct.total_price * findProduct.amount * cashback.value) /
+              100
+          );
+        return sum;
+      }, 0);
+
+      return [...res, { ...card, totalCash }];
+    }, [])
+    .sort((a, b) => b.totalCash - a.totalCash);
+};
+
 const Payment = () => {
   const {
     products,
     cards: { cards },
   } = useSelector(({ data }) => data);
+  const data = calculateCash(products, cards);
+  console.log(data);
   const [select, setSelect] = useState(
-    `${cards[0].bank}${cards[0].last_four_digits}`
+    `${data[0].bank}${data[0].last_four_digits}`
   );
 
   return (
     <div className={style.payment}>
       <h3 className={style.payment__title}>Карты для оплаты</h3>
       <div className={style.payment__container}>
-        {cards.map(({ bank, cashbacks, last_four_digits }) => (
+        {data.map(({ bank, cashbacks, last_four_digits, totalCash }) => (
           <div
             onClick={() => setSelect(`${bank}${last_four_digits}`)}
             className={style.payment__item}
@@ -108,12 +133,34 @@ const Payment = () => {
                 {!!cashbacks.length &&
                   cashbacks.map(({ product_type, value }) => (
                     <div className={style.payment__cashback} key={product_type}>
-                      <CashbackIcon size={16} name={product_type} />
+                      <CashbackIcon size={24} name={product_type} />
                       <span>
                         {product_type} {value}%
                       </span>
                     </div>
                   ))}
+                {!!cashbacks.length && (
+                  <div className={style.payment__total_cash}>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 16 16"
+                      fill="none"
+                    >
+                      <g clipPath="url(#clip0_54500_37051)">
+                        <path
+                          d="M6.00004 5.99998H6.00671M10 9.99998H10.0067M10.6667 5.33331L5.33337 10.6666M4.88922 2.54578C5.42511 2.50301 5.93385 2.29228 6.34302 1.94359C7.29786 1.12989 8.70222 1.12989 9.65706 1.94359C10.0662 2.29228 10.575 2.50301 11.1109 2.54578C12.3614 2.64557 13.3544 3.63861 13.4542 4.88916C13.497 5.42505 13.7077 5.93379 14.0564 6.34296C14.8701 7.2978 14.8701 8.70216 14.0564 9.657C13.7077 10.0662 13.497 10.5749 13.4542 11.1108C13.3544 12.3614 12.3614 13.3544 11.1109 13.4542C10.575 13.4969 10.0662 13.7077 9.65706 14.0564C8.70222 14.8701 7.29786 14.8701 6.34302 14.0564C5.93385 13.7077 5.42511 13.4969 4.88922 13.4542C3.63867 13.3544 2.64563 12.3614 2.54584 11.1108C2.50307 10.5749 2.29235 10.0662 1.94365 9.657C1.12995 8.70216 1.12995 7.2978 1.94365 6.34296C2.29235 5.93379 2.50307 5.42505 2.54584 4.88916C2.64563 3.63861 3.63867 2.64557 4.88922 2.54578ZM6.33337 5.99998C6.33337 6.18407 6.18414 6.33331 6.00004 6.33331C5.81595 6.33331 5.66671 6.18407 5.66671 5.99998C5.66671 5.81588 5.81595 5.66665 6.00004 5.66665C6.18414 5.66665 6.33337 5.81588 6.33337 5.99998ZM10.3334 9.99998C10.3334 10.1841 10.1841 10.3333 10 10.3333C9.81595 10.3333 9.66671 10.1841 9.66671 9.99998C9.66671 9.81588 9.81595 9.66665 10 9.66665C10.1841 9.66665 10.3334 9.81588 10.3334 9.99998Z"
+                          stroke="#201C00"
+                          strokeWidth="1.33"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </g>
+                    </svg>
+                    {totalCash.toFixed(2)} ₽
+                  </div>
+                )}
                 {!cashbacks.length && (
                   <span className={style.payment__no_cashback}>
                     Категории кешбека не выбраны
