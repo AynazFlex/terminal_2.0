@@ -1,3 +1,18 @@
+# Терминал оплаты по биометрии лица для магазинов
+
+## Разработал в рамках хакатона finopolis.365
+
+### стэк
+
+1. react
+2. redux-toolkit
+3. face-api.js
+4. scss modules
+
+### видео
+
+[![Видео](https://img.youtube.com/vi/vGWRUdmsnis/0.jpg)](https://www.youtube.com/watch?v=vGWRUdmsnis)
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
